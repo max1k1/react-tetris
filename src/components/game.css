@@ -1,0 +1,7 @@
+.active{
+    background-color: rgb(67, 31, 164);
+}
+
+.gameBlock .pixel{
+    padding: 10px;
+}
