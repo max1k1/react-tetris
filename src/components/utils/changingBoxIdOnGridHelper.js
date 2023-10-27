@@ -1,38 +1,53 @@
 export const changeBoxId = (activeBox, axis, changeValue, width, height, setActiveBox) => {
-  debugger;
   let result = [];
-  // const xSlice = (i) => {
-  //   const xSlice = +boxId.slice(i + 1) + changeValue;
-  //   if (width >= xSlice && 0 < xSlice) {
-  //     return xSlice;
-  //   } else {
-  //     return boxId.slice(i + 1);
-  //   }
-  // };
-  const ySlice = (i, JESTER) => {
-    const ySlice = +activeBox[i].slice(0, JESTER) + changeValue;
-    if (height >= ySlice && 0 <= ySlice) {
-      return ySlice;
+  let YArraySlice = [];
+  let XArraySlice = [];
+  const XYSlices = (i, j, axis) => {
+    if (axis === 'x') {
+      const xSlice = +activeBox[i].slice(j + 1) + changeValue;
+      XArraySlice.push(xSlice);
+      return xSlice;
     } else {
-      return activeBox[i].slice(0, JESTER);
+      const ySlice = +activeBox[i].slice(0, j) + changeValue;
+      YArraySlice.push(ySlice);
+      return ySlice;
     }
   };
 
   for (let i = 0; i < activeBox.length; i++) {
-    for (let JESTER = 0; JESTER < activeBox[i].length; JESTER++) {
-      if (axis === 'x' && activeBox[i][JESTER] === '.') {
-        // setBoxId((boxId = boxId.slice(0, i + 1) + xSlice(i)));
-        // console.log(+boxId.slice(0, i) + changeValue + boxId.slice(i));
-      } else if (axis === 'y' && activeBox[i][JESTER] === '.') {
-        result.push((ySlice(i, JESTER) + activeBox[i].slice(JESTER)))
-        // setBoxId((boxId = ySlice(i) + boxId.slice(i)));
-        // console.log(boxId.slice(0, i+1) + (+boxId.slice(i+1)+changeValue));
+    for (let j = 0; j < activeBox[i].length; j++) {
+      if (axis === 'x' && activeBox[i][j] === '.') {
+        result.push(activeBox[i].slice(0, j + 1) + XYSlices(i, j, axis));
+      } else if (axis === 'y' && activeBox[i][j] === '.') {
+        result.push(XYSlices(i, j, axis) + activeBox[i].slice(j));
       }
     }
   }
-  setActiveBox(result);
+
+
+
+  const isGoingOutOfRange = (XArraySlice, YArraySlice) => {
+    if (
+      XArraySlice.every((xSlice) => width >= xSlice && xSlice > 0) &&
+      YArraySlice.every((ySlice) => height >= ySlice && ySlice >= 0)
+    ) {
+      return setActiveBox(result);
+    } else {
+      return setActiveBox(activeBox);
+    }
+  };
+  isGoingOutOfRange(XArraySlice, YArraySlice);
+
+
+
+  ((XArraySlice, YArraySlice) => { // IIFE out of range function 
+    if (
+      XArraySlice.every((xSlice) => width >= xSlice && xSlice > 0) &&
+      YArraySlice.every((ySlice) => height >= ySlice && ySlice >= 0)
+    ) {
+      return setActiveBox(result);
+    } else {
+      return setActiveBox(activeBox);
+    }
+  })(XArraySlice, YArraySlice);
 };
-
-
-
-// add new t

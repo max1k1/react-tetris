@@ -4,9 +4,9 @@ import { changeBoxId } from './utils/changingBoxIdOnGridHelper';
 import { useInterval } from './hooks/useInterval';
 
 const Game = () => {
-  const [activeBox, setActiveBox] = useState(['0.2', '0.3', '0.4', '1.3']);
+  const [activeBox, setActiveBox] = useState(['0.2', '0.3', '0.4', '1.3',]);
   const width = 12;
-  const height = 5;
+  const height = 18;
   let pixelNumber;
   let gameAreaArray = [];
   for (let i = 0; i <= height; i++) {
@@ -17,27 +17,24 @@ const Game = () => {
     }
   }
   let activeBoxJ = 0;
+  // try to make this function to be IIFE 
   const gameAreaElement = gameAreaArray.map((rowElement, i) => {
     return (
       <div key={i}>
         {rowElement.map((a) => {
-          for (let j = activeBoxJ; j <= activeBox.length; j++) {
+          let isActive = false;
+          for (let j = activeBoxJ; j < activeBox.length; j++) {
             if (a === activeBox[j]) {
+              isActive = true;
               activeBoxJ++;
-              return (
-                <span key={a} className="pixel active">
-                  *
-                </span>
-              );
-              // {`[${boxId}]`}
-            } else {
-              return (
-                <span key={a} className="pixel">
-                  *{/* {a} */}
-                </span>
-              );
+              break;
             }
           }
+          return (
+            <span key={a} className={`pixel ${isActive ? 'active' : ''}`}>
+              *
+            </span>
+          );
         })}
       </div>
     );
@@ -45,18 +42,18 @@ const Game = () => {
 
   const keypressHandler = useCallback(
     (event) => {
-      // if (event.code === 'KeyW') {
-      //   changeBoxId(boxId, 'y', -1, width, height, setBoxId);
-      // }
-      // if (event.code === 'KeyA') {
-      //   changeBoxId(boxId, 'x', -1, width, height, setBoxId);
-      // }
-      // if (event.code === 'KeyS') {
-      //   changeBoxId(boxId, 'y', 1, width, height, setBoxId);
-      // }
-      // if (event.code === 'KeyD') {
-      //   changeBoxId(boxId, 'x', 1, width, height, setBoxId);
-      // }
+      if (event.code === 'KeyW') {
+        changeBoxId(activeBox, 'y', -1, width, height, setActiveBox);
+      }
+      if (event.code === 'KeyA') {
+        changeBoxId(activeBox, 'x', -1, width, height, setActiveBox);
+      }
+      if (event.code === 'KeyS') {
+        changeBoxId(activeBox, 'y', 1, width, height, setActiveBox);
+      }
+      if (event.code === 'KeyD') {
+        changeBoxId(activeBox, 'x', 1, width, height, setActiveBox);
+      }
     },
     [activeBox],
   );
