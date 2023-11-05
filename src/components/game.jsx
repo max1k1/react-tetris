@@ -4,7 +4,8 @@ import { changeBoxId } from './utils/changingBoxIdOnGridHelper';
 import { useInterval } from './hooks/useInterval';
 
 const Game = () => {
-  const [activeBox, setActiveBox] = useState(['0.2', '0.3', '0.4', '1.3',]);
+  const [activeBox, setActiveBox] = useState(['0.2', '0.3', '0.4', '1.3']);
+  const [placedBoxes, setPlacedBoxes] = useState(['18.2', '18.3']);
   const width = 12;
   const height = 18;
   let pixelNumber;
@@ -16,22 +17,20 @@ const Game = () => {
       gameAreaArray[i].push(pixelNumber);
     }
   }
-  let activeBoxJ = 0;
-  // try to make this function to be IIFE 
+
   const gameAreaElement = gameAreaArray.map((rowElement, i) => {
     return (
       <div key={i}>
-        {rowElement.map((a) => {
+        {rowElement.map((e) => {
           let isActive = false;
-          for (let j = activeBoxJ; j < activeBox.length; j++) {
-            if (a === activeBox[j]) {
+          for (let j = 0; j < activeBox.length + placedBoxes.length; j++) {
+            if (e === activeBox[j] || e === placedBoxes[j]) {
               isActive = true;
-              activeBoxJ++;
               break;
             }
           }
           return (
-            <span key={a} className={`pixel ${isActive ? 'active' : ''}`}>
+            <span key={e} className={`pixel ${isActive ? 'active' : ''}`}>
               *
             </span>
           );
@@ -39,24 +38,27 @@ const Game = () => {
       </div>
     );
   });
-
   const keypressHandler = useCallback(
     (event) => {
       if (event.code === 'KeyW') {
-        changeBoxId(activeBox, 'y', -1, width, height, setActiveBox);
+        changeBoxId(activeBox, placedBoxes, 'y', -1, width, height, setActiveBox, setPlacedBoxes);
       }
       if (event.code === 'KeyA') {
-        changeBoxId(activeBox, 'x', -1, width, height, setActiveBox);
+        changeBoxId(activeBox, placedBoxes, 'x', -1, width, height, setActiveBox, setPlacedBoxes);
       }
       if (event.code === 'KeyS') {
-        changeBoxId(activeBox, 'y', 1, width, height, setActiveBox);
+        changeBoxId(activeBox, placedBoxes, 'y', 1, width, height, setActiveBox, setPlacedBoxes);
       }
       if (event.code === 'KeyD') {
-        changeBoxId(activeBox, 'x', 1, width, height, setActiveBox);
+        changeBoxId(activeBox, placedBoxes, 'x', 1, width, height, setActiveBox, setPlacedBoxes);
       }
     },
-    [activeBox],
+    [activeBox, placedBoxes],
   );
+
+  useInterval(() => {
+    changeBoxId(activeBox, placedBoxes, 'y', 1, width, height, setActiveBox, setPlacedBoxes);
+  }, 1000);
 
   useEffect(() => {
     window.addEventListener('keypress', keypressHandler, false);
@@ -64,10 +66,6 @@ const Game = () => {
       window.removeEventListener('keypress', keypressHandler);
     };
   }, [keypressHandler, activeBox]);
-
-  useInterval(() => {
-    changeBoxId(activeBox, 'y', 1, width, height, setActiveBox);
-  }, 1000);
 
   return (
     <div>
