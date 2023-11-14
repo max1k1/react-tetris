@@ -2,10 +2,12 @@ import { useEffect, useState, useCallback } from 'react';
 import './game.css';
 import { changeBoxId } from './utils/changingBoxIdOnGridHelper';
 import { useInterval } from './hooks/useInterval';
+import { Box } from './utils/boxGenerator';
 
 const Game = () => {
-  const [activeBox, setActiveBox] = useState(['0.2', '0.3', '0.4', '1.3']);
-  const [placedBoxes, setPlacedBoxes] = useState(['18.2', '18.3']);
+  const box = new Box(Math.floor(Math.random() * (9 - 1 + 1) + 1), 0);
+  const [activeBox, setActiveBox] = useState(box.getBox());
+  const [placedBoxes, setPlacedBoxes] = useState('');
   const width = 12;
   const height = 18;
   let pixelNumber;
